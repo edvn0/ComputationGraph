@@ -37,7 +37,7 @@ set(CORE_INCLUDES
     include/nodes/operations/LogOperation.hpp
 )
 add_library(Core STATIC "${CORE_INCLUDES}")
-target_link_libraries(Core PRIVATE armadillo fmt::fmt)
+target_link_libraries(Core PUBLIC armadillo fmt::fmt)
 target_include_directories(Core PUBLIC include Lib/fmt/include Lib/armadillo-code/include)
 
 # If we are not on MSVC

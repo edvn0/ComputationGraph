@@ -19,10 +19,7 @@ class NeuralNetwork
   public:
 	explicit NeuralNetwork(const std::vector<LayerDefinition> &definitions,
 						   std::uint32_t inputs = 0);
-	~NeuralNetwork()
-	{
-		activations_map.clear();
-	}
+	~NeuralNetwork() = default;
 	void forward();
 	void forward(Ref<Node> &);
 	void pretty_print() const;

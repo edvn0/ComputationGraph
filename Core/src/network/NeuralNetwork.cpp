@@ -154,7 +154,12 @@ auto NeuralNetwork::build_network(
 auto NeuralNetwork::register_node_type(NodeType type, NodeTypeFactory &&factory)
 	-> void
 {
-	assert(!activations_map.contains(type));
+	if (activations_map.contains(type))
+	{
+		fmt::print("Node type {} already registered\n", to_string(type));
+		return;
+	}
+
 	activations_map[type] = factory;
 }
 
