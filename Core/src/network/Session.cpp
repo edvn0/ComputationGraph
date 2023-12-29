@@ -7,9 +7,7 @@
 #include "nodes/PlaceholderNode.hpp"
 #include "nodes/ValueNode.hpp"
 
-namespace std
-{
-template <> struct hash<std::vector<std::shared_ptr<Core::Node>>>
+template <> struct std::hash<std::vector<std::shared_ptr<Core::Node>>>
 {
 	auto operator()(const std::vector<std::shared_ptr<Core::Node>> &nodes) const
 	{
@@ -22,7 +20,6 @@ template <> struct hash<std::vector<std::shared_ptr<Core::Node>>>
 		return seed;
 	}
 };
-}  // namespace std
 
 namespace Core
 {

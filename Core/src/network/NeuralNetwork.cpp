@@ -1,6 +1,7 @@
 #include "network/NeuralNetwork.hpp"
 #include "core/Recursion.hpp"
 #include "core/Typelist.hpp"
+#include "network/Exceptions.hpp"
 #include "network/OperationTypelist.hpp"
 #include "network/Session.hpp"
 #include "nodes/Initializers.hpp"
@@ -96,6 +97,13 @@ auto NeuralNetwork::build_network(
 	arma::vec bias;
 	Xavier::initialize(weight, inputs, definitions[0].units);
 	Xavier::initialize(bias, definitions[0].units);
+
+	if (definitions.at(0).units == 0)
+	{
+		throw IncompatibleLayerDefinitionException(
+			"Layer definition must have at least one unit");
+	}
+
 	auto first_weight = make_value(weight);
 	auto first_bias = make_value(bias);
 
@@ -109,6 +117,12 @@ auto NeuralNetwork::build_network(
 	for (auto i = 1ULL; i < definitions.size(); ++i)
 	{
 		auto &definition = definitions[i];
+
+		if (definition.units == 0)
+		{
+			throw IncompatibleLayerDefinitionException(
+				"Layer definition must have at least one unit");
+		}
 
 		arma::mat other_weight;
 		arma::vec other_bias;
@@ -192,13 +206,6 @@ auto NeuralNetwork::predict(const arma::vec &vector) -> arma::mat
 {
 	placeholder_map.get("x") = vector;
 	forward();
-
-	placeholder_map.get("c") = arma::vec{0, 1, 0};
-	forward(loss_root);
-	auto computed_loss = loss_root->value;
-	fmt::println("Loss was computed:");
-	computed_loss.print();
-
 	return activation_root->value;
 }
 
@@ -206,20 +213,6 @@ auto NeuralNetwork::predict(const arma::mat &vector) -> arma::mat
 {
 	placeholder_map.get("x") = vector;
 	forward();
-
-	arma::mat first_half(3, 2, arma::fill::zeros);
-	first_half.col(1).ones();
-
-	arma::mat last_half(3, 2, arma::fill::ones);
-	last_half.col(1).zeros();
-
-	arma::mat output = arma::join_vert(first_half, last_half);
-	placeholder_map.get("c") = output;
-	forward(loss_root);
-	auto computed_loss = loss_root->value;
-	fmt::println("Loss was computed:");
-	computed_loss.print();
-
 	return activation_root->value;
 }
 

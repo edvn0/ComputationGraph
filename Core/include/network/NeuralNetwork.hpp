@@ -13,13 +13,16 @@ class NeuralNetwork
 {
 	using NodeTypeFactory =
 		decltype(+[](const std::vector<std::shared_ptr<Node>> &)
-					 -> std::shared_ptr<Node> { return {}; });
+					 -> std::shared_ptr<Node> { return nullptr; });
 	static inline std::unordered_map<NodeType, NodeTypeFactory> activations_map;
 
   public:
 	explicit NeuralNetwork(const std::vector<LayerDefinition> &definitions,
 						   std::uint32_t inputs = 0);
-	~NeuralNetwork() = default;
+	~NeuralNetwork()
+	{
+		activations_map.clear();
+	}
 	void forward();
 	void forward(Ref<Node> &);
 	void pretty_print() const;

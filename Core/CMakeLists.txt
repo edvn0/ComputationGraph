@@ -1,17 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 project(Core)
 
 add_subdirectory(Lib)
 
 set(CORE_INCLUDES
-    src/nodes/operations/ReduceSumOperation.cpp
-    include/nodes/operations/ReduceSumOperation.hpp
-    src/nodes/operations/MultiplyOperation.cpp
-    include/nodes/operations/MultiplyOperation.hpp
-    src/nodes/operations/MultiplyOperation.cpp
-    include/nodes/operations/MultiplyOperation.hpp
-    src/nodes/operations/LogOperation.cpp
-    include/nodes/operations/LogOperation.hpp
     include/core/PointerMap.hpp
     include/core/Recursion.hpp
     include/network/NeuralNetwork.hpp
@@ -35,6 +27,14 @@ set(CORE_INCLUDES
     src/nodes/Node.cpp
     src/nodes/OperationNode.cpp
     src/nodes/ValueNode.cpp
+    src/nodes/operations/ReduceSumOperation.cpp
+    src/nodes/operations/MultiplyOperation.cpp
+    src/nodes/operations/MultiplyOperation.cpp
+    src/nodes/operations/LogOperation.cpp
+    include/nodes/operations/MultiplyOperation.hpp
+    include/nodes/operations/MultiplyOperation.hpp
+    include/nodes/operations/ReduceSumOperation.hpp
+    include/nodes/operations/LogOperation.hpp
 )
 add_library(Core STATIC "${CORE_INCLUDES}")
 target_link_libraries(Core PRIVATE armadillo fmt::fmt)
@@ -43,7 +43,7 @@ target_include_directories(Core PUBLIC include Lib/fmt/include Lib/armadillo-cod
 # If we are not on MSVC
 if(NOT MSVC)
     # Enable C++17
-    target_compile_options(Core PRIVATE -Wall -Wextra -Werror -Wpedantic)
+    target_compile_options(Core PRIVATE -Wall -Wextra -Werror -Wpedantic -Wno-unused-parameter)
 else()
     # Aggressive msvc warnings
     target_compile_options(Core PRIVATE /W4 /WX)
@@ -76,3 +76,9 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Accepting typelist..."
 )
+
+set(CG_BUILD_TESTS ON)
+
+if(CG_BUILD_TESTS)
+    add_subdirectory(Tests)
+endif()
