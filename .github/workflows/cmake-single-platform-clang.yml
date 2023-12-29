@@ -1,6 +1,6 @@
 # This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
-name: CMake on a single platform
+name: CMake + Clang17 on a single platform
 
 on:
   push:
@@ -10,7 +10,8 @@ on:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+  BUILD_TYPE: RelWithDebInfo
+  NINJA_STATUS: "[%f/%t] %c/s %e "
 
 jobs:
   build:
@@ -28,6 +29,32 @@ jobs:
         sudo apt update
         sudo apt upgrade -y
         sudo apt install -y libarmadillo-dev cmake ninja-build
+    - name: Cache LLVM and Clang
+      id: cache-llvm
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./llvm
+        key: llvm-16
+
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "17"
+        env: true
+        cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+
+    - name: Configure CMake
+      run: cmake
+        -B ${{github.workspace}}/build
+        -D CMAKE_C_COMPILER=${{env.CC}}
+        -D CMAKE_C_COMPILER_LAUNCHER=ccache
+        -D CMAKE_CXX_COMPILER=${{env.CXX}}
+        -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -G "Ninja Multi-Config"
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
