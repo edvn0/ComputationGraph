@@ -1,0 +1,16 @@
+---
+# options: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle: Microsoft
+IndentWidth: 4
+# Must be 80 characters or less!
+ColumnLimit: 80
+# spaces, not tabs!
+UseTab: Always
+# if (x) doStuff()  is not allowed, bad style
+AllowShortIfStatementsOnASingleLine: false
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+# change the next line to All for Alistair's textbook style
+AlignConsecutiveMacros: Consecutive
+# use \n instead of \r\n
+UseCRLF: true

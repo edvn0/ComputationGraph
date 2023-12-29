@@ -1,0 +1,3 @@
+[submodule "Core/Lib/fmt"]
+	path = Core/Lib/fmt
+	url = git@github.com:fmtlib/fmt.git
