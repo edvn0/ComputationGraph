@@ -103,15 +103,10 @@ auto NeuralNetwork::build_network(
 		make_operation<MatrixMultiplyOperation>(placeholder_x, first_weight);
 	auto add = make_operation<AdditionOperation>(matmul, first_bias);
 
-	for (const auto &placeholder : activations_map)
-	{
-		fmt::print("{}\n", to_string(placeholder.first));
-	}
-
 	auto operation =
 		activations_map.at(definitions[0].activation)(RefVector{add});
 
-	for (auto i = 1u; i < definitions.size(); ++i)
+	for (auto i = 1ULL; i < definitions.size(); ++i)
 	{
 		auto &definition = definitions[i];
 
@@ -157,7 +152,7 @@ auto NeuralNetwork::pretty_print() const -> void
 	auto depth = 0ULL;
 	auto print_node_information = rec([](auto &&print_node_information,
 										 auto &node, auto dep) -> void {
-		for (auto i = 0; i < dep; i++)
+		for (auto i = 0ULL; i < dep; i++)
 		{
 			fmt::print(" ");
 		}

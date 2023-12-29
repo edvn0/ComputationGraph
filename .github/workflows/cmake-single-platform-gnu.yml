@@ -28,7 +28,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade -y
-        sudo apt install -y libarmadillo-dev cmake ninja-build
+        sudo apt install -y cmake ninja-build
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2

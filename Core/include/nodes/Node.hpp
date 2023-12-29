@@ -54,7 +54,7 @@ class Node : public std::enable_shared_from_this<Node>
 	virtual ~Node() = default;
 
 	// Typical for Value and Placeholder nodes.
-	virtual void forward(arma::mat &tensor)
+	virtual void forward(arma::mat &)
 	{
 		fmt::println("Node::forward(arma::mat &tensor) called");
 	};

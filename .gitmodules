@@ -1,3 +1,6 @@
 [submodule "Core/Lib/fmt"]
 	path = Core/Lib/fmt
 	url = git@github.com:fmtlib/fmt.git
+[submodule "Core/Lib/armadillo-code"]
+	path = Core/Lib/armadillo-code
+	url = https://gitlab.com/conradsnicta/armadillo-code.git

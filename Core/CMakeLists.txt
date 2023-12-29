@@ -38,7 +38,10 @@ set(CORE_INCLUDES
 )
 add_library(Core STATIC "${CORE_INCLUDES}")
 target_link_libraries(Core PRIVATE armadillo fmt::fmt)
-target_include_directories(Core PUBLIC include Lib/fmt/include)
+target_include_directories(Core PUBLIC include Lib/fmt/include Lib/armadillo-code/include)
+
+# Add wall werror etc
+target_compile_options(Core PRIVATE -Wall -Wextra -Werror -Wpedantic)
 
 # Ensure the script exists and is executable
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/generate_typelist.sh")
