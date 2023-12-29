@@ -40,8 +40,16 @@ add_library(Core STATIC "${CORE_INCLUDES}")
 target_link_libraries(Core PRIVATE armadillo fmt::fmt)
 target_include_directories(Core PUBLIC include Lib/fmt/include Lib/armadillo-code/include)
 
+# If we are not on MSVC
+if(NOT MSVC)
+    # Enable C++17
+    target_compile_options(Core PRIVATE -Wall -Wextra -Werror -Wpedantic)
+else()
+    # Aggressive msvc warnings
+    target_compile_options(Core PRIVATE /W4 /WX)
+endif()
+
 # Add wall werror etc
-target_compile_options(Core PRIVATE -Wall -Wextra -Werror -Wpedantic)
 
 # Ensure the script exists and is executable
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/generate_typelist.sh")
