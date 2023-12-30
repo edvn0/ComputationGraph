@@ -88,6 +88,7 @@ int main()
 			   mean, mean_ms, stddev, stddev_ms);
 
 	const auto output = nn.predict(X);
+	nn.train();
 	output.print();
 
 	return 0;

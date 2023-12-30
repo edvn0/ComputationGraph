@@ -26,13 +26,15 @@ class NeuralNetwork
 	auto predict(const arma::vec &) -> arma::mat;
 	auto predict(const arma::mat &) -> arma::mat;
 
+	auto train() -> void;
+
 	static auto register_node_type(NodeType type, NodeTypeFactory &&factory)
 		-> void;
 
   private:
 	Ref<Node> activation_root;
 	Ref<Node> loss_root;
-    Ref<Node> optimizer;
+	Ref<Node> optimizer;
 
 	std::uint32_t input_units{};
 	auto validate_matching_input_size(const arma::mat &) -> void;

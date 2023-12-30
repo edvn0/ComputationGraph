@@ -7,11 +7,10 @@
 
 #include <fmt/core.h>
 
+#include "core/Types.hpp"
+
 namespace Core
 {
-
-template <class T> using Ref = std::shared_ptr<T>;
-template <class T> using Weak = std::weak_ptr<T>;
 
 using WeightStatistics = std::pair<double, double>;
 
@@ -38,6 +37,7 @@ enum class NodeType : std::uint8_t
 	ReLU,
 	Reshape,
 	SELU,
+	SGD,
 	Sigmoid,
 	Softmax,
 	SoftPlus,
@@ -59,16 +59,26 @@ class Node : public std::enable_shared_from_this<Node>
 		fmt::println("Node::forward(arma::mat &tensor) called");
 	};
 
+	virtual void forward()
+	{
+		fmt::println("Node::forward(arma::mat &) called");
+	};
+
 	// Typical for Operation nodes.
 	virtual void forward(const std::vector<arma::mat> &){};
 
 	virtual void backward() = 0;
+	virtual auto propagate_gradient(const arma::mat &input) -> arma::mat
+	{
+		return input;
+	};
 
 	virtual auto get_type() const -> NodeType = 0;
 	virtual auto get_units() const -> std::uint32_t = 0;
 	virtual auto get_weight_statistics() const -> WeightStatistics = 0;
 
 	static auto is_operation(NodeType type) -> bool;
+	static auto is_optimizer(NodeType type) -> bool;
 
 	std::vector<Ref<Node>> inputs;
 	std::vector<Weak<Node>> consumers;

@@ -25,12 +25,11 @@ namespace Core
 {
 
 template <typename OperationType>
-	requires(std::is_base_of_v<Node, OperationType>) &&
-			requires {
-				{
-					OperationType::get_operation_type()
-					} -> std::same_as<NodeType>;
-			}
+	requires(std::is_base_of_v<Node, OperationType>) && requires {
+		{
+			OperationType::get_operation_type()
+		} -> std::same_as<NodeType>;
+	}
 
 void register_operation_type()
 {
@@ -151,8 +150,7 @@ auto NeuralNetwork::build_network(
 	auto negative = make_operation<NegateOperation>(reduce_other_dimension);
 	loss_root = negative;
 
-
-    optimizer = make_operation<SGDOptimizer>(loss_root, 0.001);
+	optimizer = std::make_shared<SGDOptimizer>(loss_root, 0.001);
 }
 
 auto NeuralNetwork::register_node_type(NodeType type, NodeTypeFactory &&factory)
@@ -239,6 +237,12 @@ auto NeuralNetwork::predict(const arma::mat &matrix) -> arma::mat
 	placeholder_map.get("x") = matrix;
 	forward();
 	return activation_root->value;
+}
+
+auto NeuralNetwork::train() -> void
+{
+	Session session{optimizer};
+	session.run(placeholder_map);
 }
 
 }  // namespace Core

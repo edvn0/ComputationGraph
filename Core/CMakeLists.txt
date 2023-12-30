@@ -37,6 +37,8 @@ set(CORE_INCLUDES
     include/nodes/operations/LogOperation.hpp
     include/nodes/optimizers/SGDOptimizer.hpp
     src/nodes/optimizers/SGDOptimizer.cpp
+    src/nodes/optimizers/GradientComputation.cpp
+    include/nodes/optimizers/GradientComputation.hpp
 )
 add_library(Core STATIC "${CORE_INCLUDES}")
 target_link_libraries(Core PUBLIC armadillo fmt::fmt)
