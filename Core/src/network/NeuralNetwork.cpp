@@ -63,9 +63,10 @@ template <> struct RegisterOperations<Typelist<>>
 
 NeuralNetwork::NeuralNetwork(const std::vector<LayerDefinition> &definitions,
 							 std::uint32_t inputs)
+	: input_units(inputs)
 {
 	RegisterOperations<OperationTypes>::register_all();
-	build_network(definitions, inputs);
+	build_network(definitions);
 }
 
 void NeuralNetwork::forward()
@@ -80,8 +81,7 @@ void NeuralNetwork::forward(Ref<Node> &root)
 }
 
 auto NeuralNetwork::build_network(
-	const std::vector<LayerDefinition> &definitions, std::uint32_t inputs)
-	-> void
+	const std::vector<LayerDefinition> &definitions) -> void
 {
 	using namespace Core::Initialization;
 	using Xavier = Core::Initialization::Initializer<Method::Xavier>;
@@ -95,7 +95,7 @@ auto NeuralNetwork::build_network(
 
 	arma::mat weight;
 	arma::vec bias;
-	Xavier::initialize(weight, inputs, definitions[0].units);
+	Xavier::initialize(weight, input_units, definitions[0].units);
 	Xavier::initialize(bias, definitions[0].units);
 
 	if (definitions.at(0).units == 0)
@@ -207,16 +207,32 @@ auto NeuralNetwork::pretty_print() const -> void
 	fmt::println("");
 }
 
+auto NeuralNetwork::validate_matching_input_size(const arma::mat &vector)
+	-> void
+{
+	if (vector.n_cols != input_units)
+	{
+		throw IncompatibleInputException(
+			fmt::format("Input vector has {} rows and {} columns, but network "
+						"expects -1 rows and {} columns",
+						vector.n_rows, vector.n_cols, input_units));
+	}
+}
+
 auto NeuralNetwork::predict(const arma::vec &vector) -> arma::mat
 {
+	validate_matching_input_size(vector);
+
 	placeholder_map.get("x") = vector;
 	forward();
 	return activation_root->value;
 }
 
-auto NeuralNetwork::predict(const arma::mat &vector) -> arma::mat
+auto NeuralNetwork::predict(const arma::mat &matrix) -> arma::mat
 {
-	placeholder_map.get("x") = vector;
+	validate_matching_input_size(matrix);
+
+	placeholder_map.get("x") = matrix;
 	forward();
 	return activation_root->value;
 }

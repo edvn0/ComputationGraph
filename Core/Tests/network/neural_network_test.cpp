@@ -56,4 +56,51 @@ TEST_CASE("Neural network")
 							  layer_definitions, 7),
 						  Core::IncompatibleLayerDefinitionException);
 	}
+
+	SECTION("Correct predicted output dimensions")
+	{
+		TestPtr<Core::NeuralNetwork> network{nullptr};
+		auto layer_definitions = std::vector{
+			Core::LayerDefinition{
+				10,
+				Core::NodeType::ReLU,
+			},
+			Core::LayerDefinition{
+				30,
+				Core::NodeType::Softmax,
+			},
+		};
+
+		REQUIRE_NOTHROW(network = std::make_unique<Core::NeuralNetwork>(
+							layer_definitions, 7),
+						"Creation failed");
+
+		auto input = create_random_arma_matrix(10, 7);
+		auto output = network->predict(input);
+
+		REQUIRE(output.n_rows == 7);
+		REQUIRE(output.n_cols == 30);
+	}
+
+	SECTION("Fail on incorrect predicted output")
+	{
+		TestPtr<Core::NeuralNetwork> network{nullptr};
+		auto layer_definitions = std::vector{
+			Core::LayerDefinition{
+				10,
+				Core::NodeType::ReLU,
+			},
+			Core::LayerDefinition{
+				30,
+				Core::NodeType::Softmax,
+			},
+		};
+
+		REQUIRE_NOTHROW(network = std::make_unique<Core::NeuralNetwork>(
+							layer_definitions, 7),
+						"Creation failed");
+
+		REQUIRE_THROWS_AS(network->predict(create_random_arma_matrix(10, 10)),
+						  Core::IncompatibleInputException);
+	}
 }

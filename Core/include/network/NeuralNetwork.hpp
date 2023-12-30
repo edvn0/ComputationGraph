@@ -33,10 +33,12 @@ class NeuralNetwork
 	Ref<Node> activation_root;
 	Ref<Node> loss_root;
 
+	std::uint32_t input_units{};
+	auto validate_matching_input_size(const arma::mat &) -> void;
+
 	PlaceholderMap placeholder_map;
 
-	void build_network(const std::vector<LayerDefinition> &definitions,
-					   std::uint32_t inputs);
+	void build_network(const std::vector<LayerDefinition> &definitions);
 };
 
 }  // namespace Core

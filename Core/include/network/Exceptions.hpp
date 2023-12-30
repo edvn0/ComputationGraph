@@ -35,4 +35,12 @@ class IncompatibleLayerDefinitionException : public BaseException
 	~IncompatibleLayerDefinitionException() override = default;
 };
 
+class IncompatibleInputException : public BaseException
+{
+  public:
+	using BaseException::BaseException;
+	IncompatibleInputException() = default;
+	~IncompatibleInputException() override = default;
+};
+
 }  // namespace Core
