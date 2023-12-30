@@ -78,7 +78,7 @@ TEST_CASE("Neural network")
 		auto input = create_random_arma_matrix(10, 7);
 		auto output = network->predict(input);
 
-		REQUIRE(output.n_rows == 7);
+		REQUIRE(output.n_rows == 10);
 		REQUIRE(output.n_cols == 30);
 	}
 

@@ -13,6 +13,7 @@
 #include "nodes/operations/NegateOperation.hpp"
 #include "nodes/operations/ReLUOperation.hpp"
 #include "nodes/operations/ReduceSumOperation.hpp"
+#include "nodes/optimizers/SGDOptimizer.hpp"
 
 #include <cassert>
 #include <fmt/core.h>
@@ -149,6 +150,9 @@ auto NeuralNetwork::build_network(
 		make_operation<ReduceSumOperation>(reduce_sum);
 	auto negative = make_operation<NegateOperation>(reduce_other_dimension);
 	loss_root = negative;
+
+
+    optimizer = make_operation<SGDOptimizer>(loss_root, 0.001);
 }
 
 auto NeuralNetwork::register_node_type(NodeType type, NodeTypeFactory &&factory)

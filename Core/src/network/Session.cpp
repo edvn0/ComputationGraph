@@ -39,7 +39,9 @@ auto Session::run(PlaceholderMap &map) -> const arma::mat &
 		else if (Node::is_operation(type))
 		{
 			auto operation = std::static_pointer_cast<OperationNode>(node);
-			auto consumer_outputs =
+
+            // This essentially does [n.value for n in node->inputs] in python but in cpp
+            auto consumer_outputs =
 				OperationNode::get_consumer_outputs(*operation);
 			node->forward(consumer_outputs);
 		}

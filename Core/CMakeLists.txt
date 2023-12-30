@@ -35,6 +35,8 @@ set(CORE_INCLUDES
     include/nodes/operations/MultiplyOperation.hpp
     include/nodes/operations/ReduceSumOperation.hpp
     include/nodes/operations/LogOperation.hpp
+    include/nodes/optimizers/SGDOptimizer.hpp
+    src/nodes/optimizers/SGDOptimizer.cpp
 )
 add_library(Core STATIC "${CORE_INCLUDES}")
 target_link_libraries(Core PUBLIC armadillo fmt::fmt)

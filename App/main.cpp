@@ -39,14 +39,13 @@ int main()
 	constexpr auto print_interval = count / 10;
 	auto data = generate_random_vectors<10 * count>();
 
-	arma::mat X = arma::randu<arma::mat>(6, 2);
+	auto X = arma::randu<arma::mat>(6, 2);
 	// Vector to store the duration of each iteration
 	std::vector<double> iteration_durations_ns;
 	iteration_durations_ns.reserve(data.size() * count);
 
 	for (auto i = 0; i < count; i++)
 	{
-
 		for (const auto &d : data)
 		{
 			auto start = std::chrono::high_resolution_clock::now();

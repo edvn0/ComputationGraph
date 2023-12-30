@@ -32,6 +32,7 @@ class NeuralNetwork
   private:
 	Ref<Node> activation_root;
 	Ref<Node> loss_root;
+    Ref<Node> optimizer;
 
 	std::uint32_t input_units{};
 	auto validate_matching_input_size(const arma::mat &) -> void;
