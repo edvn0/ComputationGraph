@@ -41,6 +41,7 @@ jobs:
         -D CMAKE_CXX_COMPILER=g++
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
         -D CG_FORCE_TESTS=ON
+        -D BUILD_SHARED_LIBS=OFF
         -G "Ninja Multi-Config"
 
     - name: Configure CMake
