@@ -32,7 +32,7 @@ class SGDOptimizer : public OptimizerNode
 	}
 
   private:
-	[[maybe_unused]] double learning_rate{0.001};
+	double learning_rate{0.001};
 };
 
 }  // namespace Core

@@ -62,7 +62,7 @@ template <> struct RegisterOperations<Typelist<>>
 };
 
 NeuralNetwork::NeuralNetwork(const std::vector<LayerDefinition> &definitions,
-							 std::uint32_t inputs)
+							 u32 inputs)
 	: input_units(inputs)
 {
 	RegisterOperations<OperationTypes>::register_all();
@@ -242,6 +242,9 @@ auto NeuralNetwork::predict(const arma::mat &matrix) -> arma::mat
 auto NeuralNetwork::train() -> void
 {
 	Session session{optimizer};
+	const auto one_hot_encoded_6_by_2 = arma::ones<arma::mat>(6, 2);
+
+	placeholder_map.get("c") =one_hot_encoded_6_by_2;
 	session.run(placeholder_map);
 }
 

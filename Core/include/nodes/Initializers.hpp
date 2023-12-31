@@ -11,12 +11,12 @@ enum class Method
 
 template <Method Method> struct Initializer
 {
-	template <class T> static void initialize(T &, std::uint32_t, std::uint32_t)
+	template <class T> static void initialize(T &, u32, u32)
 	{
 		throw std::runtime_error("Not implemented");
 	}
 
-	template <class T> static void initialize(T &, std::uint32_t)
+	template <class T> static void initialize(T &, u32)
 	{
 		throw std::runtime_error("Not implemented");
 	}

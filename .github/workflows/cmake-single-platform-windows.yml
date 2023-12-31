@@ -35,6 +35,7 @@ jobs:
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER=cl.exe
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -D CG_FORCE_TESTS=ON
         -G "Ninja Multi-Config"
 
     - name: Configure CMake

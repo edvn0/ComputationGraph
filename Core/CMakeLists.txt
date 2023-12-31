@@ -30,6 +30,7 @@ set(CORE_INCLUDES
     src/nodes/operations/ReduceSumOperation.cpp
     src/nodes/operations/MultiplyOperation.cpp
     src/nodes/operations/MultiplyOperation.cpp
+    src/nodes/operations/NegateOperation.cpp
     src/nodes/operations/LogOperation.cpp
     include/nodes/operations/MultiplyOperation.hpp
     include/nodes/operations/MultiplyOperation.hpp
@@ -51,6 +52,13 @@ if(NOT MSVC)
 else()
     # Aggressive msvc warnings
     target_compile_options(Core PRIVATE /W4 /WX)
+endif()
+
+if(${CG_IS_DEBUG})
+    message(STATUS "ComputationGraph is adding debug information.")
+    target_compile_definitions(Core PRIVATE CG_DEBUG)
+else()
+    message(STATUS "ComputationGraph is in non-debug mode.")
 endif()
 
 # Add wall werror etc
@@ -80,8 +88,6 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Accepting typelist..."
 )
-
-set(CG_BUILD_TESTS ON)
 
 if(CG_BUILD_TESTS)
     add_subdirectory(Tests)

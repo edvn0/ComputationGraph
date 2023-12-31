@@ -9,7 +9,7 @@
 
 template <> struct std::hash<std::vector<std::shared_ptr<Core::Node>>>
 {
-	auto operator()(const std::vector<std::shared_ptr<Core::Node>> &nodes) const
+	auto operator()(const std::vector<std::shared_ptr<Core::Node>> &nodes) const noexcept
 	{
 		auto seed = nodes.size();
 		for (const auto &node : nodes)
@@ -33,12 +33,12 @@ auto Session::run(PlaceholderMap &map) -> const arma::mat &
 		const auto type = node->get_type();
 		if (type == NodeType::Placeholder)
 		{
-			auto placeholder = std::static_pointer_cast<PlaceholderNode>(node);
+			auto placeholder = std::dynamic_pointer_cast<PlaceholderNode>(node);
 			node->forward(map.get(placeholder->get_identifier()));
 		}
 		else if (Node::is_operation(type))
 		{
-			auto operation = std::static_pointer_cast<OperationNode>(node);
+			auto operation = std::dynamic_pointer_cast<OperationNode>(node);
 
 			// This essentially does [n.value for n in node->inputs] in python
 			// but in cpp
@@ -53,8 +53,8 @@ auto Session::run(PlaceholderMap &map) -> const arma::mat &
 		}
 		else if (type == NodeType::Value)
 		{
-			auto placeholder = std::static_pointer_cast<ValueNode>(node);
-			node->forward(placeholder->value);
+			auto value_node = std::dynamic_pointer_cast<ValueNode>(node);
+			node->forward(value_node->value);
 		}
 	}
 	return graph_root->value;

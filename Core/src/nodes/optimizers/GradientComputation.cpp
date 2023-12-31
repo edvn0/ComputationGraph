@@ -26,11 +26,12 @@ auto compute_gradients(Ref<Node> &loss) -> std::unordered_map<Node *, arma::mat>
 
 		if (node != loss)
 		{
-			grad_table[node.get()] = arma::mat(/* appropriate dimensions */);
+			auto &current_gradient = grad_table[node.get()];
+			current_gradient.set_size(1, 1);
+			current_gradient.at(0) = 0;
 
 			for (auto &weak_consumer : node->consumers)
 			{
-				// Lock the weak pointer to get a shared pointer
 				auto consumer = weak_consumer.lock();
 				if (!consumer)
 					continue;
@@ -43,17 +44,19 @@ auto compute_gradients(Ref<Node> &loss) -> std::unordered_map<Node *, arma::mat>
 
 				if (consumer->inputs.size() == 1)
 				{
-					grad_table[node.get()] += lossgrads_wrt_consumer_inputs;
+					// We've got a scalar
+					current_gradient += lossgrads_wrt_consumer_inputs.at(0);
 				}
 				else
 				{
-					auto it = std::find(consumer->inputs.begin(),
-										consumer->inputs.end(), node);
-					auto node_index_in_consumer_inputs =
+					const auto it = std::find(consumer->inputs.begin(),
+											  consumer->inputs.end(), node);
+					const auto node_index_in_consumer_inputs =
 						std::distance(consumer->inputs.begin(), it);
-					auto lossgrad_wrt_node = lossgrads_wrt_consumer_inputs
-						[node_index_in_consumer_inputs];
-					grad_table[node.get()] += lossgrad_wrt_node;
+					const auto &lossgrad_wrt_node =
+						lossgrads_wrt_consumer_inputs.at(
+							node_index_in_consumer_inputs);
+					current_gradient += lossgrad_wrt_node;
 				}
 			}
 		}

@@ -13,15 +13,14 @@ class NegateOperation : public OperationNode
 	using OperationNode::OperationNode;
 
 	auto forward(const std::vector<arma::mat> &consumer_outputs)
-		-> void override
-	{
-		assert(consumer_outputs.size() == 1);
-		value = -consumer_outputs[0];
-	}
+		-> void override;
 
 	auto backward() -> void override
 	{
 	}
+
+	auto propagate_gradient(const arma::mat &input)
+		-> std::vector<arma::mat> override;
 
 	auto get_type() const -> NodeType override
 	{

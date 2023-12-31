@@ -18,7 +18,7 @@ class NeuralNetwork
 
   public:
 	explicit NeuralNetwork(const std::vector<LayerDefinition> &definitions,
-						   std::uint32_t inputs = 0);
+						   u32 inputs = 0);
 	~NeuralNetwork() = default;
 	void forward();
 	void forward(Ref<Node> &);
@@ -36,7 +36,7 @@ class NeuralNetwork
 	Ref<Node> loss_root;
 	Ref<Node> optimizer;
 
-	std::uint32_t input_units{};
+	u32 input_units{};
 	auto validate_matching_input_size(const arma::mat &) -> void;
 
 	PlaceholderMap placeholder_map;

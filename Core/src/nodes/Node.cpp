@@ -87,6 +87,8 @@ auto to_string(NodeType type) -> std::string
 		return "TanH";
 	case NodeType::Value:
 		return "Value";
+	default:
+		return "Unknown";
 	}
 }
 

@@ -28,7 +28,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade -y
-        sudo apt install -y cmake ninja-build
+        sudo apt install -y libopenblas-dev cmake ninja-build
 
     - name: Cache LLVM and Clang
       id: cache-llvm
@@ -55,6 +55,7 @@ jobs:
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER=${{env.CXX}}
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -D CG_FORCE_TESTS=ON
         -G "Ninja Multi-Config"
 
     - name: Configure CMake

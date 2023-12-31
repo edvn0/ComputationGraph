@@ -15,6 +15,19 @@ auto MultiplyOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 	value = broadcastedA % broadcastedB;
 }
 
+std::vector<arma::mat> MultiplyOperation::propagate_gradient(
+	const arma::mat &input)
+{
+	[[maybe_unused]] const auto &A = this->inputs.at(0)->value;
+	[[maybe_unused]] const auto &B = this->inputs.at(1)->value;
+
+#ifdef CG_DEBUG
+	return {input, input};
+#else
+	return {input * A, input * B};
+#endif
+}
+
 void MultiplyOperation::broadcast_matrices(const arma::mat &A,
 										   const arma::mat &B,
 										   arma::mat &broadcast_a,

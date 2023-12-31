@@ -12,6 +12,8 @@
                 "${workspaceFolder}/build",
                 "--config",
                 "Debug",
+                "--target",
+                "App"
             ],
             "group": {
                 "kind": "build",

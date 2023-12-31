@@ -23,4 +23,11 @@ auto SoftmaxOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 	value = expInput / replicated_sum;
 }
 
+std::vector<arma::mat> SoftmaxOperation::propagate_gradient(
+	const arma::mat &)
+{
+	return {arma::mat(1,1)};
+}
+
+
 }  // namespace Core

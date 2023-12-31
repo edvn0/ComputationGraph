@@ -9,10 +9,10 @@ namespace Core
 
 struct LayerDefinition
 {
-	std::uint32_t units{};
+	u32 units{};
 	NodeType activation;
 
-	LayerDefinition(std::uint32_t neurons, NodeType type = NodeType::None)
+	LayerDefinition(u32 neurons, NodeType type = NodeType::None)
 		: units(neurons), activation(type)
 	{
 	}
