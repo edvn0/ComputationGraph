@@ -9,7 +9,8 @@
 
 template <> struct std::hash<std::vector<std::shared_ptr<Core::Node>>>
 {
-	auto operator()(const std::vector<std::shared_ptr<Core::Node>> &nodes) const noexcept
+	auto operator()(
+		const std::vector<std::shared_ptr<Core::Node>> &nodes) const noexcept
 	{
 		auto seed = nodes.size();
 		for (const auto &node : nodes)

@@ -15,7 +15,7 @@ using i32 = std::int32_t;
 
 template <class T> using Ref = std::shared_ptr<T>;
 template <class T> using Weak = std::weak_ptr<T>;
-template <class T> using Raw = T*;
+template <class T> using Raw = T *;
 template <class T> using RefVector = std::vector<Ref<T>>;
 
 }  // namespace Core

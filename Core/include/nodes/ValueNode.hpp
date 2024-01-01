@@ -38,7 +38,7 @@ class ValueNode : public Node
 		value = tensor;
 	}
 
-	static auto extract_matrix_unsafe(const Ref<Node>& node)
+	static auto extract_matrix_unsafe(const Ref<Node> &node)
 	{
 		return node.get()->value;
 	}

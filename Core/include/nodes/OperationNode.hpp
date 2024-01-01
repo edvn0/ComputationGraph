@@ -71,7 +71,7 @@ template <class OperationType, typename... Args>
 auto make_operation(Ref<Node> &left, Args &&...args) -> Ref<Node>
 {
 	auto output = std::make_shared<OperationType>(std::vector{left},
-										   std::forward<Args>(args)...);
+												  std::forward<Args>(args)...);
 	output->add_consumers();
 	return output;
 }

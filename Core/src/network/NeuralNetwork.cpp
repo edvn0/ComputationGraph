@@ -244,7 +244,7 @@ auto NeuralNetwork::train() -> void
 	Session session{optimizer};
 	const auto one_hot_encoded_6_by_2 = arma::ones<arma::mat>(6, 2);
 
-	placeholder_map.get("c") =one_hot_encoded_6_by_2;
+	placeholder_map.get("c") = one_hot_encoded_6_by_2;
 	session.run(placeholder_map);
 }
 
