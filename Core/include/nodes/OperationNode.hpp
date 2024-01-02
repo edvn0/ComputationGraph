@@ -26,32 +26,6 @@ class OperationNode : public Node
 		-> std::vector<arma::mat>;
 };
 
-class OptimizerNode : public Node
-{
-  public:
-	~OptimizerNode() override = default;
-	explicit OptimizerNode(const Ref<Node> &inputs) : Node({}), node(inputs)
-	{
-	}
-
-	auto get_units() const -> u32 override
-	{
-		return 0;
-	}
-	auto get_weight_statistics() const -> WeightStatistics override
-	{
-		return {};
-	}
-
-	auto get_root() -> auto &
-	{
-		return node;
-	}
-
-  private:
-	Ref<Node> node;
-};
-
 template <class OperationType>
 auto make_operation(const std::vector<Ref<Node>> &inputs) -> Ref<Node>
 {

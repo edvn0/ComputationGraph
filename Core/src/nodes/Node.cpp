@@ -97,9 +97,4 @@ auto Node::is_operation(NodeType type) -> bool
 	return IsOperationInTypelist<OperationTypes>::check(type);
 }
 
-auto Node::is_optimizer(NodeType type) -> bool
-{
-	return IsOperationInTypelist<OptimizerTypes>::check(type);
-}
-
 }  // namespace Core

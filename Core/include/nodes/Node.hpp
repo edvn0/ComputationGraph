@@ -85,7 +85,6 @@ class Node : public std::enable_shared_from_this<Node>
 	};
 
 	static auto is_operation(NodeType type) -> bool;
-	static auto is_optimizer(NodeType type) -> bool;
 
 	std::vector<Ref<Node>> inputs;
 	std::vector<Weak<Node>> consumers;

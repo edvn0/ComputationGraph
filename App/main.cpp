@@ -88,7 +88,12 @@ int main()
 			   mean, mean_ms, stddev, stddev_ms);
 
 	const auto output = nn.predict(X);
-	nn.train();
+	nn.fit(X, arma::randu<arma::mat>(6, 2),
+		   {
+			   7,
+			   6 / 2,
+			   0.01,
+		   });
 	output.print();
 
 	return 0;

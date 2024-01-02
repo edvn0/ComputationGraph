@@ -27,7 +27,7 @@ class Session
 	}
 	auto run(PlaceholderMap &) -> const arma::mat &;
 
-	auto get_current_computation_order() -> std::vector<Ref<Node>> &
+	auto get_current_computation_order() -> std::vector<Ref<Node>>
 	{
 		return get_or_compute_computation_order(graph_root);
 	}
@@ -49,7 +49,7 @@ class Session
 	 * order.
 	 */
 	auto get_or_compute_computation_order(Ref<Node> node)
-		-> std::vector<Ref<Node>> &;
+		-> std::vector<Ref<Node>>;
 };
 
 }  // namespace Core

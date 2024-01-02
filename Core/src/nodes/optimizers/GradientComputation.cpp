@@ -36,7 +36,8 @@ auto compute_gradients(Ref<Node> &loss) -> std::unordered_map<Node *, arma::mat>
 				if (!consumer)
 					continue;
 
-				auto lossgrad_wrt_consumer_output = grad_table[consumer.get()];
+				const auto &lossgrad_wrt_consumer_output =
+					grad_table.at(consumer.get());
 
 				// Assuming a backward method for each operation type
 				auto lossgrads_wrt_consumer_inputs =

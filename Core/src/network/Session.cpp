@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "core/Recursion.hpp"
+#include "nodes/Node.hpp"
 #include "nodes/OperationNode.hpp"
 #include "nodes/PlaceholderNode.hpp"
 #include "nodes/ValueNode.hpp"
@@ -47,11 +48,6 @@ auto Session::run(PlaceholderMap &map) -> const arma::mat &
 				OperationNode::get_consumer_outputs(*operation);
 			node->forward(consumer_outputs);
 		}
-		else if (Node::is_optimizer(type))
-		{
-			node->forward();
-			break;
-		}
 		else if (type == NodeType::Value)
 		{
 			auto value_node = std::dynamic_pointer_cast<ValueNode>(node);
@@ -62,12 +58,15 @@ auto Session::run(PlaceholderMap &map) -> const arma::mat &
 }
 
 auto Session::get_or_compute_computation_order(Ref<Node> operation)
-	-> std::vector<Ref<Node>> &
+	-> std::vector<Ref<Node>>
 {
 	std::vector<Ref<Node>> computation_order;
 	auto recurse =
 		rec([&computation_order](auto &&recurse, Ref<Node> &node) -> void {
-			if (Node::is_operation(node->get_type()))
+			const auto type = node->get_type();
+			const bool is_operation_or_optimizer = Node::is_operation(type);
+
+			if (is_operation_or_optimizer)
 			{
 				for (auto &input : node->inputs)
 				{
@@ -79,6 +78,9 @@ auto Session::get_or_compute_computation_order(Ref<Node> operation)
 
 	recurse(operation);
 
+#ifdef CG_DEBUG
+	return computation_order;
+#else
 	auto hash = std::hash<std::vector<Ref<Node>>>{}(computation_order);
 	if (computation_order_cache.contains(hash))
 	{
@@ -87,6 +89,7 @@ auto Session::get_or_compute_computation_order(Ref<Node> operation)
 
 	computation_order_cache.emplace(hash, computation_order);
 	return computation_order_cache.at(hash);
+#endif
 }
 
 }  // namespace Core

@@ -2,20 +2,26 @@
 
 #include "nodes/OperationNode.hpp"
 #include "nodes/optimizers/GradientComputation.hpp"
+#include <vector>
 
 namespace Core
 {
 
-class SGDOptimizer : public OptimizerNode
+class SGDOptimizer : public OperationNode
 {
   public:
 	~SGDOptimizer() override = default;
-	explicit SGDOptimizer(const Ref<Node> &inputs, double lr = 0.0001)
-		: OptimizerNode(inputs), learning_rate(lr)
+	explicit SGDOptimizer(const std::vector<Ref<Node>> &inputs,
+						  double lr = 0.0001)
+		: OperationNode(inputs), learning_rate(lr)
 	{
 	}
 
 	auto forward() -> void override;
+	auto forward(const std::vector<arma::mat> &) -> void override
+	{
+		forward();
+	};
 
 	auto backward() -> void override
 	{

@@ -20,6 +20,8 @@ std::vector<arma::mat> LogOperation::propagate_gradient(const arma::mat &input)
 	const auto constructed =
 		arma::repmat(input, first_input.n_rows, first_input.n_cols);
 
+	fmt::print("LogOperation Gradients");
+
 	return {constructed / first_input};
 }
 

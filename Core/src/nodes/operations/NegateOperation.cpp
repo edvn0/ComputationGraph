@@ -17,6 +17,8 @@ auto NegateOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 std::vector<arma::mat> NegateOperation::propagate_gradient(
 	const arma::mat &input)
 {
+	fmt::print("NegateOperation Gradients\n");
+
 	return {-input};
 }
 

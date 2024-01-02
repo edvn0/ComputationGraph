@@ -9,6 +9,13 @@
 namespace Core
 {
 
+struct NetworkFitParameters
+{
+	u32 epochs{10};
+	u32 batch_size{1};
+	double learning_rate{0.01};
+};
+
 class NeuralNetwork
 {
 	using NodeTypeFactory =
@@ -26,7 +33,8 @@ class NeuralNetwork
 	auto predict(const arma::vec &) -> arma::mat;
 	auto predict(const arma::mat &) -> arma::mat;
 
-	auto train() -> void;
+	auto fit(const arma::mat &X, const arma::mat &y,
+			 const NetworkFitParameters &parameters = {}) -> void;
 
 	static auto register_node_type(NodeType type, NodeTypeFactory &&factory)
 		-> void;

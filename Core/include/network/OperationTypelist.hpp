@@ -17,8 +17,6 @@ namespace Core
 using OperationTypes =
 	Typelist<SoftmaxOperation, NegateOperation, ReLUOperation,
 			 MultiplyOperation, ReduceSumOperation, AdditionOperation,
-			 MatrixMultiplyOperation, LogOperation>;
-
-using OptimizerTypes = Typelist<SGDOptimizer>;
+			 MatrixMultiplyOperation, LogOperation, SGDOptimizer>;
 
 }  // namespace Core

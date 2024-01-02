@@ -25,11 +25,12 @@ namespace Core
 {
 
 template <typename OperationType>
-	requires(std::is_base_of_v<Node, OperationType>) && requires {
-		{
-			OperationType::get_operation_type()
-		} -> std::same_as<NodeType>;
-	}
+	requires(std::is_base_of_v<Node, OperationType>) &&
+			requires {
+				{
+					OperationType::get_operation_type()
+					} -> std::same_as<NodeType>;
+			}
 
 void register_operation_type()
 {
@@ -150,7 +151,7 @@ auto NeuralNetwork::build_network(
 	auto negative = make_operation<NegateOperation>(reduce_other_dimension);
 	loss_root = negative;
 
-	optimizer = std::make_shared<SGDOptimizer>(loss_root, 0.001);
+	optimizer = make_operation<SGDOptimizer>(loss_root, 0.001);
 }
 
 auto NeuralNetwork::register_node_type(NodeType type, NodeTypeFactory &&factory)
@@ -239,13 +240,43 @@ auto NeuralNetwork::predict(const arma::mat &matrix) -> arma::mat
 	return activation_root->value;
 }
 
-auto NeuralNetwork::train() -> void
+auto NeuralNetwork::fit(const arma::mat &X, const arma::mat &y,
+						const NetworkFitParameters &parameters) -> void
 {
 	Session session{optimizer};
-	const auto one_hot_encoded_6_by_2 = arma::ones<arma::mat>(6, 2);
+	auto randomly_sample_same_rows_from_x_and_y_into_tuple =
+		[&](const arma::mat &X,
+			const arma::mat &y) -> std::tuple<arma::mat, arma::mat> {
+		auto rows = X.n_rows;
+		auto cols = X.n_cols;
+		auto y_rows = y.n_rows;
+		auto y_cols = y.n_cols;
+		assert(rows == y_rows);
+		assert(cols == y_cols);
+		auto indices = arma::randi<arma::uvec>(parameters.batch_size,
+											   arma::distr_param(0, rows - 1));
+		auto X_batch = arma::mat(parameters.batch_size, cols);
+		auto y_batch = arma::mat(parameters.batch_size, y_cols);
 
-	placeholder_map.get("c") = one_hot_encoded_6_by_2;
-	session.run(placeholder_map);
+		// Can we vectorise this?
+		for (auto i = 0ULL; i < parameters.batch_size; ++i)
+		{
+			X_batch.row(i) = X.row(indices(i));
+			y_batch.row(i) = y.row(indices(i));
+
+			fmt::println("Chosen index: {}", indices(i));
+		}
+		return {X_batch, y_batch};
+	};
+
+	for (auto i = 0ULL; i < parameters.epochs; ++i)
+	{
+		auto &&[X_batch, y_batch] =
+			randomly_sample_same_rows_from_x_and_y_into_tuple(X, y);
+		placeholder_map.get("c") = y_batch;
+		placeholder_map.get("x") = X_batch;
+		session.run(placeholder_map);
+	}
 }
 
 }  // namespace Core

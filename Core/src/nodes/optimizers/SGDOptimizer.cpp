@@ -7,7 +7,7 @@ namespace Core
 {
 auto SGDOptimizer::forward() -> void
 {
-	auto computed_gradient = compute_gradients(get_root());
+	auto computed_gradient = compute_gradients(inputs.at(0));
 	for (auto &&[k, v] : computed_gradient)
 	{
 		fmt::print("{}\n", to_string(k->get_type()));
