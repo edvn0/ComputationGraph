@@ -6,8 +6,8 @@ namespace Core::Initialization
 template <> struct Initializer<Method::Xavier>
 {
   public:
-	static void initialize(arma::mat &weights, std::uint32_t input_units,
-						   std::uint32_t output_units)
+	static void initialize(arma::mat &weights, u32 input_units,
+						   u32 output_units)
 	{
 		const auto variance = 2.0 / (input_units + output_units);
 
@@ -16,7 +16,7 @@ template <> struct Initializer<Method::Xavier>
 		weights.imbue([&]() { return arma::randn() * std::sqrt(variance); });
 	}
 
-	static void initialize(arma::vec &weights, std::uint32_t input_units)
+	static void initialize(arma::vec &weights, u32 input_units)
 	{
 		const auto variance = 2.0 / (input_units);
 		// resize

@@ -21,6 +21,9 @@ class ReduceSumOperation : public OperationNode
 	{
 	}
 
+	auto propagate_gradient(const arma::mat &input)
+		-> std::vector<arma::mat> override;
+
 	auto get_type() const -> NodeType override
 	{
 		return NodeType::ReduceSum;

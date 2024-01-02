@@ -17,7 +17,7 @@ class ValueNode : public Node
 	{
 		return NodeType::Value;
 	}
-	auto get_units() const -> std::uint32_t override
+	auto get_units() const -> u32 override
 	{
 		return 0;
 	}
@@ -37,10 +37,18 @@ class ValueNode : public Node
 	{
 		value = tensor;
 	}
+
+	static auto extract_matrix_unsafe(const Ref<Node> &node)
+	{
+		return node.get()->value;
+	}
 };
 
-inline auto make_value(const arma::mat &tensor) -> Ref<Node> {
-  return std::make_shared<ValueNode>(tensor);
+inline auto make_value(const arma::mat &tensor) -> Ref<Node>
+{
+	auto output = std::make_shared<ValueNode>(tensor);
+	output->add_consumers();
+	return output;
 }
 
 }  // namespace Core

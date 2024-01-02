@@ -15,6 +15,26 @@ auto MultiplyOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 	value = broadcastedA % broadcastedB;
 }
 
+std::vector<arma::mat> MultiplyOperation::propagate_gradient(
+	const arma::mat &input)
+{
+	// Value field is an arma::mat
+	const auto &A = this->inputs.at(0)->value;
+	const auto &B = this->inputs.at(1)->value;
+
+	arma::mat expandedA = arma::repmat(A, 1, input.n_cols);
+	arma::mat expandedB = arma::repmat(B, 1, input.n_cols);
+
+	auto input_repmat_a =
+		arma::repmat(input, expandedA.n_rows, expandedA.n_cols);
+	auto input_repmat_b =
+		arma::repmat(input, expandedB.n_rows, expandedB.n_cols);
+
+	fmt::print("MultiplyOperation Gradients\n");
+
+	return {input_repmat_a % expandedB, input_repmat_b % expandedA};
+}
+
 void MultiplyOperation::broadcast_matrices(const arma::mat &A,
 										   const arma::mat &B,
 										   arma::mat &broadcast_a,

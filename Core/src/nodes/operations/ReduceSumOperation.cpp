@@ -25,4 +25,11 @@ auto ReduceSumOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 	}
 }
 
+std::vector<arma::mat> ReduceSumOperation::propagate_gradient(const arma::mat &)
+{
+	fmt::print("ReduceSumOperation Gradients\n");
+
+	return {arma::mat(1, 1)};
+}
+
 }  // namespace Core

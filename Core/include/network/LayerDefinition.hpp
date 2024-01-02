@@ -9,11 +9,11 @@ namespace Core
 
 struct LayerDefinition
 {
-	int units;
+	u32 units{};
 	NodeType activation;
 
-	LayerDefinition(int u, NodeType a = NodeType::None)
-		: units(u), activation(a)
+	LayerDefinition(u32 neurons, NodeType type = NodeType::None)
+		: units(neurons), activation(type)
 	{
 	}
 };

@@ -31,20 +31,60 @@ auto to_string(NodeType type) -> std::string
 {
 	switch (type)
 	{
+	case NodeType::Activation:
+		return "Activation";
 	case NodeType::Addition:
 		return "Addition";
+	case NodeType::BatchNormalization:
+		return "BatchNormalization";
+	case NodeType::Convolution:
+		return "Convolution";
+	case NodeType::Dense:
+		return "Dense";
+	case NodeType::Dropout:
+		return "Dropout";
+	case NodeType::ELU:
+		return "ELU";
+	case NodeType::Flatten:
+		return "Flatten";
+	case NodeType::LeakyReLU:
+		return "LeakyReLU";
+	case NodeType::Log:
+		return "Log";
 	case NodeType::MatrixMultiply:
 		return "MatrixMultiply";
+	case NodeType::Multiply:
+		return "Multiply";
 	case NodeType::Negate:
 		return "Negate";
+	case NodeType::None:
+		return "None";
+	case NodeType::Operation:
+		return "Operation";
+	case NodeType::Placeholder:
+		return "Placeholder";
+	case NodeType::Pooling:
+		return "Pooling";
+	case NodeType::ReduceSum:
+		return "ReduceSum";
 	case NodeType::ReLU:
 		return "ReLU";
+	case NodeType::Reshape:
+		return "Reshape";
+	case NodeType::SELU:
+		return "SELU";
+	case NodeType::SGD:
+		return "SGD";
 	case NodeType::Sigmoid:
 		return "Sigmoid";
 	case NodeType::Softmax:
 		return "Softmax";
-	case NodeType::Placeholder:
-		return "Placeholder";
+	case NodeType::SoftPlus:
+		return "SoftPlus";
+	case NodeType::SoftSign:
+		return "SoftSign";
+	case NodeType::TanH:
+		return "TanH";
 	case NodeType::Value:
 		return "Value";
 	default:
@@ -56,4 +96,5 @@ auto Node::is_operation(NodeType type) -> bool
 {
 	return IsOperationInTypelist<OperationTypes>::check(type);
 }
+
 }  // namespace Core

@@ -10,11 +10,6 @@ auto AdditionOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 {
 #ifdef CG_DEBUG
 	assert(consumer_outputs.size() == 2);
-	if (consumer_outputs[0].n_cols != consumer_outputs[1].n_cols ||
-		consumer_outputs[0].n_rows != consumer_outputs[1].n_rows)
-	{
-		throw std::invalid_argument("Matrices cannot be added");
-	}
 #endif
 	auto left = consumer_outputs.at(0);
 	const auto &right = consumer_outputs.at(1);
@@ -25,4 +20,10 @@ auto AdditionOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 
 	value = left;
 }
+
+std::vector<arma::mat> AdditionOperation::propagate_gradient(const arma::mat &)
+{
+	return {arma::mat(1, 1), arma::mat(1, 1)};
+}
+
 }  // namespace Core

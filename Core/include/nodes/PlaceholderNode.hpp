@@ -17,14 +17,6 @@ class PlaceholderNode : public Node
 	{
 		return NodeType::Placeholder;
 	}
-	auto get_units() const -> std::uint32_t override
-	{
-		return 0;
-	}
-	auto get_weight_statistics() const -> WeightStatistics override
-	{
-		return {};
-	}
 
 	void forward(arma::mat &val) override
 	{
@@ -47,7 +39,9 @@ class PlaceholderNode : public Node
 
 inline auto make_placeholder(std::string_view id) -> Ref<Node>
 {
-	return std::make_shared<PlaceholderNode>(id);
+	auto output = std::make_shared<PlaceholderNode>(id);
+	output->add_consumers();
+	return output;
 }
 
 }  // namespace Core

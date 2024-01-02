@@ -13,5 +13,13 @@ auto ReLUOperation::forward(const std::vector<arma::mat> &consumer_outputs)
 
 	value = copied;
 }
+std::vector<arma::mat> ReLUOperation::propagate_gradient(const arma::mat &input)
+{
+	const auto &output = this->value;
+
+	fmt::print("ReLUOperation Gradients\n");
+
+	return {input * output * (1 - output)};
+}
 
 }  // namespace Core

@@ -1,6 +1,7 @@
 #include "network/NeuralNetwork.hpp"
 #include "core/Recursion.hpp"
 #include "core/Typelist.hpp"
+#include "network/Exceptions.hpp"
 #include "network/OperationTypelist.hpp"
 #include "network/Session.hpp"
 #include "nodes/Initializers.hpp"
@@ -12,6 +13,7 @@
 #include "nodes/operations/NegateOperation.hpp"
 #include "nodes/operations/ReLUOperation.hpp"
 #include "nodes/operations/ReduceSumOperation.hpp"
+#include "nodes/optimizers/SGDOptimizer.hpp"
 
 #include <cassert>
 #include <fmt/core.h>
@@ -61,10 +63,11 @@ template <> struct RegisterOperations<Typelist<>>
 };
 
 NeuralNetwork::NeuralNetwork(const std::vector<LayerDefinition> &definitions,
-							 std::uint32_t inputs)
+							 u32 inputs)
+	: input_units(inputs)
 {
 	RegisterOperations<OperationTypes>::register_all();
-	build_network(definitions, inputs);
+	build_network(definitions);
 }
 
 void NeuralNetwork::forward()
@@ -79,8 +82,7 @@ void NeuralNetwork::forward(Ref<Node> &root)
 }
 
 auto NeuralNetwork::build_network(
-	const std::vector<LayerDefinition> &definitions, std::uint32_t inputs)
-	-> void
+	const std::vector<LayerDefinition> &definitions) -> void
 {
 	using namespace Core::Initialization;
 	using Xavier = Core::Initialization::Initializer<Method::Xavier>;
@@ -94,8 +96,15 @@ auto NeuralNetwork::build_network(
 
 	arma::mat weight;
 	arma::vec bias;
-	Xavier::initialize(weight, inputs, definitions[0].units);
+	Xavier::initialize(weight, input_units, definitions[0].units);
 	Xavier::initialize(bias, definitions[0].units);
+
+	if (definitions.at(0).units == 0)
+	{
+		throw IncompatibleLayerDefinitionException(
+			"Layer definition must have at least one unit");
+	}
+
 	auto first_weight = make_value(weight);
 	auto first_bias = make_value(bias);
 
@@ -109,6 +118,12 @@ auto NeuralNetwork::build_network(
 	for (auto i = 1ULL; i < definitions.size(); ++i)
 	{
 		auto &definition = definitions[i];
+
+		if (definition.units == 0)
+		{
+			throw IncompatibleLayerDefinitionException(
+				"Layer definition must have at least one unit");
+		}
 
 		arma::mat other_weight;
 		arma::vec other_bias;
@@ -135,12 +150,19 @@ auto NeuralNetwork::build_network(
 		make_operation<ReduceSumOperation>(reduce_sum);
 	auto negative = make_operation<NegateOperation>(reduce_other_dimension);
 	loss_root = negative;
+
+	optimizer = make_operation<SGDOptimizer>(loss_root, 0.001);
 }
 
 auto NeuralNetwork::register_node_type(NodeType type, NodeTypeFactory &&factory)
 	-> void
 {
-	assert(!activations_map.contains(type));
+	if (activations_map.contains(type))
+	{
+		fmt::print("Node type {} already registered\n", to_string(type));
+		return;
+	}
+
 	activations_map[type] = factory;
 }
 
@@ -188,39 +210,73 @@ auto NeuralNetwork::pretty_print() const -> void
 	fmt::println("");
 }
 
+auto NeuralNetwork::validate_matching_input_size(const arma::mat &vector)
+	-> void
+{
+	if (vector.n_cols != input_units)
+	{
+		throw IncompatibleInputException(
+			fmt::format("Input vector has {} rows and {} columns, but network "
+						"expects -1 rows and {} columns",
+						vector.n_rows, vector.n_cols, input_units));
+	}
+}
+
 auto NeuralNetwork::predict(const arma::vec &vector) -> arma::mat
 {
+	validate_matching_input_size(vector);
+
 	placeholder_map.get("x") = vector;
 	forward();
-
-	placeholder_map.get("c") = arma::vec{0, 1, 0};
-	forward(loss_root);
-	auto computed_loss = loss_root->value;
-	fmt::println("Loss was computed:");
-	computed_loss.print();
-
 	return activation_root->value;
 }
 
-auto NeuralNetwork::predict(const arma::mat &vector) -> arma::mat
+auto NeuralNetwork::predict(const arma::mat &matrix) -> arma::mat
 {
-	placeholder_map.get("x") = vector;
+	validate_matching_input_size(matrix);
+
+	placeholder_map.get("x") = matrix;
 	forward();
-
-	arma::mat first_half(3, 2, arma::fill::zeros);
-	first_half.col(1).ones();
-
-	arma::mat last_half(3, 2, arma::fill::ones);
-	last_half.col(1).zeros();
-
-	arma::mat output = arma::join_vert(first_half, last_half);
-	placeholder_map.get("c") = output;
-	forward(loss_root);
-	auto computed_loss = loss_root->value;
-	fmt::println("Loss was computed:");
-	computed_loss.print();
-
 	return activation_root->value;
+}
+
+auto NeuralNetwork::fit(const arma::mat &X, const arma::mat &y,
+						const NetworkFitParameters &parameters) -> void
+{
+	Session session{optimizer};
+	auto randomly_sample_same_rows_from_x_and_y_into_tuple =
+		[&](const arma::mat &X,
+			const arma::mat &y) -> std::tuple<arma::mat, arma::mat> {
+		auto rows = X.n_rows;
+		auto cols = X.n_cols;
+		auto y_rows = y.n_rows;
+		auto y_cols = y.n_cols;
+		assert(rows == y_rows);
+		assert(cols == y_cols);
+		auto indices = arma::randi<arma::uvec>(parameters.batch_size,
+											   arma::distr_param(0, rows - 1));
+		auto X_batch = arma::mat(parameters.batch_size, cols);
+		auto y_batch = arma::mat(parameters.batch_size, y_cols);
+
+		// Can we vectorise this?
+		for (auto i = 0ULL; i < parameters.batch_size; ++i)
+		{
+			X_batch.row(i) = X.row(indices(i));
+			y_batch.row(i) = y.row(indices(i));
+
+			fmt::println("Chosen index: {}", indices(i));
+		}
+		return {X_batch, y_batch};
+	};
+
+	for (auto i = 0ULL; i < parameters.epochs; ++i)
+	{
+		auto &&[X_batch, y_batch] =
+			randomly_sample_same_rows_from_x_and_y_into_tuple(X, y);
+		placeholder_map.get("c") = y_batch;
+		placeholder_map.get("x") = X_batch;
+		session.run(placeholder_map);
+	}
 }
 
 }  // namespace Core

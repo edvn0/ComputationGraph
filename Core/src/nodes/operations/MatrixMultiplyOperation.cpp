@@ -23,4 +23,15 @@ auto MatrixMultiplyOperation::forward(
 	value = left * right;
 }
 
+std::vector<arma::mat> MatrixMultiplyOperation::propagate_gradient(
+	const arma::mat &input)
+{
+	const auto &A = this->inputs.at(0)->value;
+	const auto &B = this->inputs.at(1)->value;
+
+	fmt::print("MatrixMultiplyOperation Gradients\n");
+
+	return {input * B.t(), A.t() * input};
+}
+
 }  // namespace Core

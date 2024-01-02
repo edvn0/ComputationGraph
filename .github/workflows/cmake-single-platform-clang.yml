@@ -12,6 +12,8 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
   NINJA_STATUS: "[%f/%t] %c/s %e "
+  CXX: clang++
+  CC: clang
 
 jobs:
   build:
@@ -28,7 +30,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade -y
-        sudo apt install -y cmake ninja-build
+        sudo apt install -y libopenblas-dev cmake ninja-build
 
     - name: Cache LLVM and Clang
       id: cache-llvm
@@ -55,6 +57,8 @@ jobs:
         -D CMAKE_C_COMPILER_LAUNCHER=ccache
         -D CMAKE_CXX_COMPILER=${{env.CXX}}
         -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -D CG_FORCE_TESTS=ON
+        -D BUILD_SHARED_LIBS=OFF
         -G "Ninja Multi-Config"
 
     - name: Configure CMake

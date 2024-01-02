@@ -13,7 +13,7 @@ class OperationNode : public Node
 	{
 	}
 
-	auto get_units() const -> std::uint32_t override
+	auto get_units() const -> u32 override
 	{
 		return 0;
 	}
@@ -26,28 +26,36 @@ class OperationNode : public Node
 		-> std::vector<arma::mat>;
 };
 
-template<class OperationType>
+template <class OperationType>
 auto make_operation(const std::vector<Ref<Node>> &inputs) -> Ref<Node>
 {
-	return std::make_shared<OperationType>(inputs);
+	auto output = std::make_shared<OperationType>(inputs);
+	output->add_consumers();
+	return output;
 }
 
-template<class OperationType>
-auto make_operation(Ref<Node>& left) -> Ref<Node>
+template <class OperationType> auto make_operation(Ref<Node> &left) -> Ref<Node>
 {
-	return std::make_shared<OperationType>(std::vector {left});
+	auto output = std::make_shared<OperationType>(std::vector{left});
+	output->add_consumers();
+	return output;
 }
 
-template<class OperationType, typename... Args>
-auto make_operation(Ref<Node>& left, Args&&... args) -> Ref<Node>
+template <class OperationType, typename... Args>
+auto make_operation(Ref<Node> &left, Args &&...args) -> Ref<Node>
 {
-	return std::make_shared<OperationType>(std::vector {left}, std::forward<Args>(args)...);
+	auto output = std::make_shared<OperationType>(std::vector{left},
+												  std::forward<Args>(args)...);
+	output->add_consumers();
+	return output;
 }
 
-template<class OperationType>
-auto make_operation(Ref<Node>& left, Ref<Node>& right) -> Ref<Node>
+template <class OperationType>
+auto make_operation(Ref<Node> &left, Ref<Node> &right) -> Ref<Node>
 {
-	return std::make_shared<OperationType>(std::vector {left, right});
+	auto output = std::make_shared<OperationType>(std::vector{left, right});
+	output->add_consumers();
+	return output;
 }
 
 }  // namespace Core

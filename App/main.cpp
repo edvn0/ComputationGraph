@@ -1,4 +1,5 @@
 #include "network/NeuralNetwork.hpp"
+#include <array>
 #include <iostream>
 
 template <std::size_t Size>
@@ -38,14 +39,13 @@ int main()
 	constexpr auto print_interval = count / 10;
 	auto data = generate_random_vectors<10 * count>();
 
-	arma::mat X = arma::randu<arma::mat>(6, 2);
+	auto X = arma::randu<arma::mat>(6, 2);
 	// Vector to store the duration of each iteration
 	std::vector<double> iteration_durations_ns;
 	iteration_durations_ns.reserve(data.size() * count);
 
 	for (auto i = 0; i < count; i++)
 	{
-
 		for (const auto &d : data)
 		{
 			auto start = std::chrono::high_resolution_clock::now();
@@ -87,7 +87,13 @@ int main()
 			   "{:.6f} ns ({:.6f} ms)\n",
 			   mean, mean_ms, stddev, stddev_ms);
 
-	const auto output = nn.predict(data.at(2));
+	const auto output = nn.predict(X);
+	nn.fit(X, arma::randu<arma::mat>(6, 2),
+		   {
+			   7,
+			   6 / 2,
+			   0.01,
+		   });
 	output.print();
 
 	return 0;

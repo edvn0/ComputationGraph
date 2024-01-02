@@ -4,3 +4,7 @@
 [submodule "Core/Lib/armadillo-code"]
 	path = Core/Lib/armadillo-code
 	url = https://gitlab.com/conradsnicta/armadillo-code.git
+[submodule "Core/Tests/Lib/Catch2"]
+	path = Core/Tests/Lib/Catch2
+	url = git@github.com:catchorg/Catch2.git
+
